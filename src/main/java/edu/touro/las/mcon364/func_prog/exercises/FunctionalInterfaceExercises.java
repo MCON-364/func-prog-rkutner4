@@ -74,8 +74,9 @@ public class FunctionalInterfaceExercises {
      * Hint: consider chaining.
      */
     public static Predicate<Integer> positiveAndDivisibleByFive() {
-        // TODO
-        return null;
+        Predicate<Integer> isPositive = n -> n > 0;
+        Predicate<Integer> divisibleByFive = n -> n % 5 == 0;
+        return isPositive.and(divisibleByFive);
     }
 
     // =========================================================
@@ -89,8 +90,7 @@ public class FunctionalInterfaceExercises {
      * Formula: F = C * 9/5 + 32
      */
     public static Function<Double, Double> celsiusToFahrenheit() {
-        // TODO
-        return null;
+        return x -> x * 9.0/5 + 32;
     }
 
     /**
@@ -100,8 +100,19 @@ public class FunctionalInterfaceExercises {
      * Bonus: Make it case-insensitive.
      */
     public static Function<String, Integer> countVowels() {
-        // TODO
-        return null;
+        return str -> {
+            if (str == null) return 0;
+
+            int count = 0;
+            String lower = str.toLowerCase();
+
+            for(char c : lower.toCharArray()) {
+                if ("aeiou".indexOf(c) != -1) {
+                    count++;
+                    }
+            }
+            return count;
+        };
     }
 
     // =========================================================
@@ -116,8 +127,7 @@ public class FunctionalInterfaceExercises {
      * *** Hello ***
      */
     public static Consumer<String> starPrinter() {
-        // TODO
-        return null;
+        return str -> System.out.println("*** " + str + " ***");
     }
 
     /**
@@ -125,8 +135,7 @@ public class FunctionalInterfaceExercises {
      * of an integer.
      */
     public static Consumer<Integer> printSquare() {
-        // TODO
-        return null;
+        return  x -> System.out.println(x*x);
     }
 
     // =========================================================
@@ -145,7 +154,15 @@ public class FunctionalInterfaceExercises {
      *  - Print them
      */
     public static void processStrings(List<String> values) {
-        // TODO
+        Predicate<String> isLongEnough = s -> s.length() > 3;
+        Function<String, String> convertToLowerCase = String::toLowerCase;
+        Consumer<String> printer = s-> System.out.println(s);
+        for(String value : values) {
+            if(isLongEnough.test(value)) {
+                value = convertToLowerCase.apply(value);
+                printer.accept(value);
+            }
+        }
     }
 
     /**
@@ -158,6 +175,16 @@ public class FunctionalInterfaceExercises {
      * Print only those above 70.
      */
     public static void generateAndFilterScores() {
-        // TODO
+        Supplier<Integer> scoreSupplier = () -> (int)(Math.random()*101);
+        Predicate<Integer> isGreaterThan70 = n -> n > 70;
+        Consumer<Integer> printer = n -> System.out.println(n);
+
+        for (int i = 1; i <= 5; i++) {
+            int s = scoreSupplier.get();
+            if (isGreaterThan70.test(s)) {
+                printer.accept(s);
+            }
+
+        }
     }
 }
