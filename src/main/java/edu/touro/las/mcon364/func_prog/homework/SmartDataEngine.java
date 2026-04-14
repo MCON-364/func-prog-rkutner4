@@ -45,6 +45,12 @@ public class SmartDataEngine {
             Consumer<R> consumer
     ) {
         // TODO
+        for (T item : input) {
+            if (filter.test(item)) {
+                R result = mapper.apply(item);
+                consumer.accept(result);
+            }
+        }
     }
 
     // ============================================================
@@ -60,7 +66,10 @@ public class SmartDataEngine {
      */
     public static Optional<Double> safeDivide(double a, double b) {
         // TODO
-        return Optional.empty();
+        if (b == 0) {
+            return Optional.empty();
+        }
+        return Optional.of(a / b);
     }
 
     /**
@@ -79,7 +88,9 @@ public class SmartDataEngine {
      */
     public static double processDivision(double a, double b) {
         // TODO
-        return 0;
+        return safeDivide(a, b)
+                .map(result -> result * 10)
+                .orElse(-1.0);
     }
 
     // ============================================================
@@ -100,16 +111,12 @@ public class SmartDataEngine {
      */
     public static Object transformObject(Object input) {
 
-        // Example structure (not solution):
-
-        // return switch (input) {
-        //     case Integer i -> ...
-        //     case String s  -> ...
-        //     case Double d  -> ...
-        //     default -> ...
-        // };
-
-        return null;
+        return switch (input) {
+            case Integer i -> i * i;
+            case String s -> s.toUpperCase();
+            case Double d -> Math.round(d);
+            default -> "Unsupported";
+        };
     }
 
     // ============================================================
@@ -147,7 +154,13 @@ public class SmartDataEngine {
 
     public static Function<String, Integer> buildStringLengthPipeline() {
         // TODO
-        return null;
+        Function<String, String> trim = s -> s.trim();
+        Function<String, String> lower = s -> s.toLowerCase();
+        Function<String, Integer> length = s -> s.length();
+
+        return trim
+                .andThen(lower)
+                .andThen(length);
     }
 
     // ============================================================
@@ -188,6 +201,21 @@ public class SmartDataEngine {
 
     public static void runScoreProcessor() {
         // TODO
+        Supplier<Integer> supplier = () -> (int)(Math.random() * 100) + 1;
+
+        Predicate<Integer> predicate = n -> n > 50;
+
+        Function<Integer, String> function = n -> "Score: " + n;
+
+        Consumer<String> consumer = System.out::println;
+
+        List<Integer> numbers = new java.util.ArrayList<>();
+
+        for (int i = 0; i < 10; i++) {
+            numbers.add(supplier.get());
+        }
+
+        pipeline(numbers, predicate, function, consumer);
     }
 
 }
